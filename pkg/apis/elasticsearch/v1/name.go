@@ -21,6 +21,7 @@ const (
 	httpServiceSuffix                            = "http"
 	internalHTTPServiceSuffix                    = "internal-http"
 	transportServiceSuffix                       = "transport"
+	exporterServiceSuffix                        = "elasticsearch-exporter"
 	elasticUserSecretSuffix                      = "elastic-user"
 	internalUsersSecretSuffix                    = "internal-users"
 	exporterUserSecretSuffix                     = "exporter-user"
@@ -129,6 +130,10 @@ func LegacyTransportCertsSecretSuffix(esName string) string {
 
 func TransportService(esName string) string {
 	return ESNamer.Suffix(esName, transportServiceSuffix)
+}
+
+func ExporterService(esName string) string {
+	return ESNamer.Suffix(esName, exporterServiceSuffix)
 }
 
 func InternalHTTPService(esName string) string {

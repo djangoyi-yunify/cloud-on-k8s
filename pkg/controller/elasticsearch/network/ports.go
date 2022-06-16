@@ -9,4 +9,6 @@ const (
 	HTTPPort = 9200
 	// TransportPort used by Elasticsearch for the Transport protocol in node to node communication
 	TransportPort = 9300
+	// ExporterPort used by elasticsearch-exporter
+	ExporterPort = 9108
 )

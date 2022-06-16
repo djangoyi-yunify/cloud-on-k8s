@@ -62,6 +62,33 @@ func NewTransportService(es esv1.Elasticsearch) *corev1.Service {
 	return defaults.SetServiceDefaults(&svc, labels, labels, ports)
 }
 
+func ExporterServiceName(esName string) string {
+	return esv1.ExporterService(esName)
+}
+
+func NewExporterService(es esv1.Elasticsearch) *corev1.Service {
+	nsn := k8s.ExtractNamespacedName(&es)
+
+	svc := corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{},
+		Spec:       corev1.ServiceSpec{},
+	}
+
+	svc.ObjectMeta.Namespace = es.Namespace
+	svc.ObjectMeta.Name = ExporterServiceName(es.Name)
+	labels := label.NewLabels(nsn)
+	ports := []corev1.ServicePort{
+		{
+			Name:     "http", // prefix with protocol for Istio compatibility
+			Protocol: corev1.ProtocolTCP,
+			Port:     network.ExporterPort,
+		},
+	}
+	// selector for elasticsearch-exporter
+
+	return defaults.SetServiceDefaults(&svc, labels, labels, ports)
+}
+
 // ExternalServiceName returns the name for the external service
 // associated to this cluster
 func ExternalServiceName(esName string) string {

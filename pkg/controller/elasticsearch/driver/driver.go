@@ -140,6 +140,9 @@ func (d *defaultDriver) Reconcile(ctx context.Context) *reconciler.Results {
 		return results.WithError(err)
 	}
 
+	// Exporter Service
+	common.ReconcileService(ctx, d.Client, services.NewExporterService(d.ES), &d.ES)
+
 	resourcesState, err := reconcile.NewResourcesStateFromAPI(d.Client, d.ES)
 	if err != nil {
 		return results.WithError(err)
