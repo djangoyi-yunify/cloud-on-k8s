@@ -136,6 +136,10 @@ func aggregateFileRealm(
 	if err != nil {
 		return filerealm.Realm{}, esclient.BasicAuth{}, err
 	}
+	exporterUser, err := reconcileExporterUser(c, es, existingFileRealm)
+	if err != nil {
+		return filerealm.Realm{}, esclient.BasicAuth{}, err
+	}
 
 	// fetch associated users
 	associatedUsers, err := retrieveAssociatedUsers(c, es)
@@ -153,6 +157,7 @@ func aggregateFileRealm(
 	fileRealm := filerealm.MergedFrom(
 		internalUsers.fileRealm(),
 		elasticUser.fileRealm(),
+		exporterUser.fileRealm(),
 		associatedUsers.fileRealm(),
 		userProvidedFileRealm,
 	)

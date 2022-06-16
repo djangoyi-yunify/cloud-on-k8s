@@ -32,6 +32,8 @@ const (
 	ProbeUserName = "elastic-internal-probe"
 	// MonitoringUserName is used for the Elasticsearch monitoring.
 	MonitoringUserName = "elastic-internal-monitoring"
+
+	ExporterUserName = "elasticsearch-exporter"
 )
 
 // reconcileElasticUser reconciles a single secret holding the "elastic" user password.
@@ -44,6 +46,21 @@ func reconcileElasticUser(c k8s.Client, es esv1.Elasticsearch, existingFileRealm
 			{Name: ElasticUserName, Roles: []string{SuperUserBuiltinRole}},
 		},
 		esv1.ElasticUserSecret(es.Name),
+		// Don't set an ownerRef for the elastic user secret, likely to be copied into different namespaces.
+		// See https://github.com/elastic/cloud-on-k8s/issues/3986.
+		false,
+	)
+}
+
+func reconcileExporterUser(c k8s.Client, es esv1.Elasticsearch, existingFileRealm filerealm.Realm) (users, error) {
+	return reconcilePredefinedUsers(
+		c,
+		es,
+		existingFileRealm,
+		users{
+			{Name: ExporterUserName, Roles: []string{SuperUserBuiltinRole}},
+		},
+		esv1.ExporterUserSecret(es.Name),
 		// Don't set an ownerRef for the elastic user secret, likely to be copied into different namespaces.
 		// See https://github.com/elastic/cloud-on-k8s/issues/3986.
 		false,

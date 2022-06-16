@@ -23,6 +23,7 @@ const (
 	transportServiceSuffix                       = "transport"
 	elasticUserSecretSuffix                      = "elastic-user"
 	internalUsersSecretSuffix                    = "internal-users"
+	exporterUserSecretSuffix                     = "exporter-user"
 	unicastHostsConfigMapSuffix                  = "unicast-hosts"
 	licenseSecretSuffix                          = "license"
 	defaultPodDisruptionBudget                   = "default"
@@ -51,6 +52,7 @@ var (
 		elasticUserSecretSuffix,
 		rolesAndFileRealmSecretSuffix,
 		internalUsersSecretSuffix,
+		exporterUserSecretSuffix,
 		unicastHostsConfigMapSuffix,
 		licenseSecretSuffix,
 		defaultPodDisruptionBudget,
@@ -147,6 +149,10 @@ func RolesAndFileRealmSecret(esName string) string {
 
 func InternalUsersSecret(esName string) string {
 	return ESNamer.Suffix(esName, internalUsersSecretSuffix)
+}
+
+func ExporterUserSecret(esName string) string {
+	return ESNamer.Suffix(esName, exporterUserSecretSuffix)
 }
 
 // UnicastHostsConfigMap returns the name of the ConfigMap that holds the list of seed nodes for a given cluster.
