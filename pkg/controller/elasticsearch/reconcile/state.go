@@ -44,6 +44,7 @@ func NewState(c esv1.Elasticsearch) (*State, error) {
 	// reset the phase to an empty string so that we do not report an outdated phase given that certain phases are
 	// stickier than others (eg. invalid)
 	status.Phase = ""
+	status.State = ""
 	return &State{
 		Recorder: events.NewRecorder(),
 		StatusReporter: &StatusReporter{
@@ -113,6 +114,7 @@ func (s *State) UpdateWithPhase(
 		return s
 	}
 	s.status.Phase = phase
+	s.status.State = phase
 	return s
 }
 
@@ -167,6 +169,7 @@ func (s *State) UpdateMinRunningVersion(
 // and generate an event at the same time.
 func (s *State) UpdateElasticsearchInvalidWithEvent(msg string) {
 	s.status.Phase = esv1.ElasticsearchResourceInvalid
+	s.status.State = esv1.ElasticsearchResourceInvalid
 	s.AddEvent(corev1.EventTypeWarning, events.EventReasonValidation, msg)
 }
 

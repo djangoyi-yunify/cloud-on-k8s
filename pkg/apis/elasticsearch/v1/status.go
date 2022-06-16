@@ -63,6 +63,7 @@ type ElasticsearchStatus struct {
 	Version string                          `json:"version,omitempty"`
 	Health  ElasticsearchHealth             `json:"health,omitempty"`
 	Phase   ElasticsearchOrchestrationPhase `json:"phase,omitempty"`
+	State   ElasticsearchOrchestrationPhase `json:"state,omitempty"`
 
 	MonitoringAssociationsStatus commonv1.AssociationStatusMap `json:"monitoringAssociationStatus,omitempty"`
 
