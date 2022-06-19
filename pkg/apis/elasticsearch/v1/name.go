@@ -25,6 +25,7 @@ const (
 	elasticUserSecretSuffix                      = "elastic-user"
 	internalUsersSecretSuffix                    = "internal-users"
 	exporterUserSecretSuffix                     = "exporter-user"
+	exporterDeploymentSuffix                     = "elasticsearch-exporter"
 	unicastHostsConfigMapSuffix                  = "unicast-hosts"
 	licenseSecretSuffix                          = "license"
 	defaultPodDisruptionBudget                   = "default"
@@ -54,6 +55,7 @@ var (
 		rolesAndFileRealmSecretSuffix,
 		internalUsersSecretSuffix,
 		exporterUserSecretSuffix,
+		exporterDeploymentSuffix,
 		unicastHostsConfigMapSuffix,
 		licenseSecretSuffix,
 		defaultPodDisruptionBudget,
@@ -134,6 +136,10 @@ func TransportService(esName string) string {
 
 func ExporterService(esName string) string {
 	return ESNamer.Suffix(esName, exporterServiceSuffix)
+}
+
+func ExporterDeployment(esName string) string {
+	return ESNamer.Suffix(esName, exporterDeploymentSuffix)
 }
 
 func InternalHTTPService(esName string) string {

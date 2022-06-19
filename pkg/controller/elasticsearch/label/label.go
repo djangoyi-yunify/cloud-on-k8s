@@ -27,6 +27,8 @@ const (
 	PodNameLabelName = "elasticsearch.k8s.elastic.co/pod-name"
 	// StatefulSetNameLabelName used to store the name of the statefulset.
 	StatefulSetNameLabelName = "elasticsearch.k8s.elastic.co/statefulset-name"
+	// ExporterDeploymentNameLabelName used to store the name of the Exporter's Deployment
+	ExporterDeploymentNameLabelName = "elasticsearch.k8s.elastic.co/exporter_deployment-name"
 	// NodeTypesMasterLabelName is a label set to true on nodes with the master role
 	NodeTypesMasterLabelName common.TrueFalseLabel = "elasticsearch.k8s.elastic.co/node-master"
 	// NodeTypesDataLabelName is a label set to true on nodes with the data role
@@ -178,6 +180,25 @@ func NewStatefulSetLabels(es types.NamespacedName, ssetName string) map[string]s
 	lbls := NewLabels(es)
 	lbls[StatefulSetNameLabelName] = ssetName
 	return lbls
+}
+
+func NewExporterServiceLabels(es types.NamespacedName, edName string) map[string]string {
+	lbls := NewLabels(es)
+	lbls[ExporterDeploymentNameLabelName] = edName
+	return lbls
+}
+
+func NewExporterDeploymentLabels(es types.NamespacedName, edName string, ver version.Version) map[string]string {
+	lbls := NewLabels(es)
+	lbls[ExporterDeploymentNameLabelName] = edName
+	lbls[VersionLabelName] = ver.String()
+	return lbls
+}
+
+func NewLabelSelectorForExporterDeployment(es types.NamespacedName, edName string) map[string]string {
+	sels := NewLabels(es)
+	sels[ExporterDeploymentNameLabelName] = edName
+	return sels
 }
 
 // NewLabelSelectorForElasticsearch returns a labels.Selector that matches the labels as constructed by NewLabels

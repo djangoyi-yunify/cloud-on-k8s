@@ -19,6 +19,7 @@ import (
 	esv1 "github.com/elastic/cloud-on-k8s/pkg/apis/elasticsearch/v1"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/association"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/common"
+	"github.com/elastic/cloud-on-k8s/pkg/controller/common/deployment"
 	commondriver "github.com/elastic/cloud-on-k8s/pkg/controller/common/driver"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/common/events"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/common/expectations"
@@ -138,6 +139,12 @@ func (d *defaultDriver) Reconcile(ctx context.Context) *reconciler.Results {
 	internalService, err = common.ReconcileService(ctx, d.Client, services.NewInternalService(d.ES), &d.ES)
 	if err != nil {
 		return results.WithError(err)
+	}
+
+	// Exporter Deployment
+	exporterDeployment, err := newExporterDeployment(d.ES)
+	if err == nil {
+		deployment.Reconcile(d.Client, exporterDeployment, &d.ES)
 	}
 
 	// Exporter Service
