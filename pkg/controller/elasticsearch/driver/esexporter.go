@@ -12,6 +12,7 @@ import (
 	"github.com/elastic/cloud-on-k8s/pkg/utils/k8s"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
@@ -79,13 +80,20 @@ func newExporterPodTemplateSpec(es esv1.Elasticsearch, lbs map[string]string) co
 						"--log.level=info",
 						esURI(es),
 						"--es.all",
-						"--es.indices",
-						"--es.shards",
-						"--es.snapshots",
 						"--es.timeout=30s",
 						"--es.ssl-skip-verify",
 						"--web.listen-address=:9108",
 						"--web.telemetry-path=/metrics",
+					},
+					Resources: corev1.ResourceRequirements{
+						Limits: corev1.ResourceList{
+							"cpu":    resource.MustParse("200m"),
+							"memory": resource.MustParse("256Mi"),
+						},
+						Requests: corev1.ResourceList{
+							"cpu":    resource.MustParse("100m"),
+							"memory": resource.MustParse("128Mi"),
+						},
 					},
 					Ports: []corev1.ContainerPort{
 						{

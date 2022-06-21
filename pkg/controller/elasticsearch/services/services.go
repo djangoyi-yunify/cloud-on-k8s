@@ -76,7 +76,7 @@ func NewExporterService(es esv1.Elasticsearch) *corev1.Service {
 
 	svc.ObjectMeta.Namespace = es.Namespace
 	svc.ObjectMeta.Name = ExporterServiceName(es.Name)
-	labels := label.NewExporterServiceLabels(nsn, es.Name)
+	labels := label.NewExporterServiceLabels(nsn, esv1.ExporterDeployment(es.Name))
 	ports := []corev1.ServicePort{
 		{
 			Name:     "http", // prefix with protocol for Istio compatibility
