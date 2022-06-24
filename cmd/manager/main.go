@@ -70,6 +70,7 @@ import (
 	commonwebhook "github.com/elastic/cloud-on-k8s/pkg/controller/common/webhook"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/elasticsearch"
 	esclient "github.com/elastic/cloud-on-k8s/pkg/controller/elasticsearch/client"
+	"github.com/elastic/cloud-on-k8s/pkg/controller/elasticsearch/driver"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/elasticsearch/settings"
 	esvalidation "github.com/elastic/cloud-on-k8s/pkg/controller/elasticsearch/validation"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/enterprisesearch"
@@ -295,6 +296,46 @@ func Command() *cobra.Command {
 		"auto-detect",
 		"Enables setting the default security context with fsGroup=1000 for Elasticsearch 8.0+ Pods. Ignored pre-8.0. Possible values: true, false, auto-detect",
 	)
+	cmd.Flags().String(
+		operator.ExporterImageUrlFlag,
+		driver.DefaultExporterImageUrl,
+		fmt.Sprintf("elasticsearch-exporter's image url, default value is %s", driver.DefaultExporterImageUrl),
+	)
+	cmd.Flags().Bool(
+		operator.ExporterEsAllFlag,
+		true,
+		"elasticsearch-exporter option: --es.all",
+	)
+	cmd.Flags().Bool(
+		operator.ExporterEsClusterSettingsFlag,
+		false,
+		"elasticsearch-exporter option: --es.cluster_settings",
+	)
+	cmd.Flags().Bool(
+		operator.ExporterEsIndicesFlag,
+		false,
+		"elasticsearch-exporter option: --es.indices",
+	)
+	cmd.Flags().Bool(
+		operator.ExporterEsIndicesSettingsFlag,
+		false,
+		"elasticsearch-exporter option: --es.indices_settings",
+	)
+	cmd.Flags().Bool(
+		operator.ExporterEsIndicesMappingsFlag,
+		false,
+		"elasticsearch-exporter option: --es.indices_mappings",
+	)
+	cmd.Flags().Bool(
+		operator.ExporterEsShardsFlag,
+		false,
+		"elasticsearch-exporter option: --es.shards",
+	)
+	cmd.Flags().Bool(
+		operator.ExporterEsSnapshotsFlag,
+		false,
+		"elasticsearch-exporter option: --es.snapshots",
+	)
 
 	// hide development mode flags from the usage message
 	_ = cmd.Flags().MarkHidden(operator.AutoPortForwardFlag)
@@ -439,6 +480,45 @@ func startOperator(ctx context.Context) error {
 		container.SetContainerSuffix("-ubi8")
 		version.GlobalMinStackVersion = version.From(7, 10, 0)
 	}
+
+	// set elasticsearch-exporter image url
+	exporterImageUrl := viper.GetString(operator.ExporterImageUrlFlag)
+	log.Info("Setting default exporter image url", "exporter-image-url", exporterImageUrl)
+	driver.SetExporterImageUrl(exporterImageUrl)
+
+	// init elasticsearch-exporter config
+	driver.InitExporterConfig()
+
+	// set elasticsearch-exporter config
+	if viper.GetBool(operator.ExporterEsAllFlag) {
+		log.Info("Setting exporter's option: --es.all")
+		driver.SetExporterConfig(operator.ExporterEsAllFlag)
+	}
+	if viper.GetBool(operator.ExporterEsClusterSettingsFlag) {
+		log.Info("Setting exporter's option: --es.cluster_settings")
+		driver.SetExporterConfig(operator.ExporterEsClusterSettingsFlag)
+	}
+	if viper.GetBool(operator.ExporterEsIndicesFlag) {
+		log.Info("Setting exporter's option: --es.indices")
+		driver.SetExporterConfig(operator.ExporterEsIndicesFlag)
+	}
+	if viper.GetBool(operator.ExporterEsIndicesSettingsFlag) {
+		log.Info("Setting exporter's option: --es.indices_settings")
+		driver.SetExporterConfig(operator.ExporterEsIndicesSettingsFlag)
+	}
+	if viper.GetBool(operator.ExporterEsIndicesMappingsFlag) {
+		log.Info("Setting exporter's option: --es.indices_mappings")
+		driver.SetExporterConfig(operator.ExporterEsIndicesMappingsFlag)
+	}
+	if viper.GetBool(operator.ExporterEsShardsFlag) {
+		log.Info("Setting exporter's option: --es.shards")
+		driver.SetExporterConfig(operator.ExporterEsShardsFlag)
+	}
+	if viper.GetBool(operator.ExporterEsSnapshotsFlag) {
+		log.Info("Setting exporter's option: --es.snapshots")
+		driver.SetExporterConfig(operator.ExporterEsSnapshotsFlag)
+	}
+	driver.MakeExporterOptions()
 
 	// Get a config to talk to the apiserver
 	cfg, err := ctrl.GetConfig()

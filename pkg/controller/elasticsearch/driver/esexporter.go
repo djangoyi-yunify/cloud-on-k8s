@@ -2,9 +2,11 @@ package driver
 
 import (
 	"fmt"
+	"strings"
 
 	esv1 "github.com/elastic/cloud-on-k8s/pkg/apis/elasticsearch/v1"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/common/deployment"
+	"github.com/elastic/cloud-on-k8s/pkg/controller/common/operator"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/common/version"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/elasticsearch/label"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/elasticsearch/services"
@@ -16,6 +18,58 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
+
+var (
+	exporterImageUrl  string
+	exporterConfig    map[string]bool
+	mappingsToOptions map[string]string
+	exporterOptions   = []string{
+		"elasticsearch_exporter",
+		"--log.format=logfmt",
+		"--log.level=info",
+		"--es.timeout=30s",
+		"--es.ssl-skip-verify",
+		"--web.listen-address=:9108",
+		"--web.telemetry-path=/metrics",
+	}
+)
+
+const DefaultExporterImageUrl = "quay.io/prometheuscommunity/elasticsearch-exporter:v1.3.0"
+
+func SetExporterImageUrl(url string) {
+	exporterImageUrl = url
+}
+
+func InitExporterConfig() {
+	exporterConfig = make(map[string]bool)
+	exporterConfig[operator.ExporterEsAllFlag] = false
+	exporterConfig[operator.ExporterEsClusterSettingsFlag] = false
+	exporterConfig[operator.ExporterEsIndicesFlag] = false
+	exporterConfig[operator.ExporterEsIndicesSettingsFlag] = false
+	exporterConfig[operator.ExporterEsIndicesMappingsFlag] = false
+	exporterConfig[operator.ExporterEsShardsFlag] = false
+	exporterConfig[operator.ExporterEsSnapshotsFlag] = false
+	mappingsToOptions = make(map[string]string)
+	mappingsToOptions[operator.ExporterEsAllFlag] = "--es.all"
+	mappingsToOptions[operator.ExporterEsClusterSettingsFlag] = "--es.cluster_settings"
+	mappingsToOptions[operator.ExporterEsIndicesFlag] = "--es.indices"
+	mappingsToOptions[operator.ExporterEsIndicesSettingsFlag] = "--es.indices_settings"
+	mappingsToOptions[operator.ExporterEsIndicesMappingsFlag] = "--es.indices_mappings"
+	mappingsToOptions[operator.ExporterEsShardsFlag] = "--es.shards"
+	mappingsToOptions[operator.ExporterEsSnapshotsFlag] = "--es.snapshots"
+}
+
+func MakeExporterOptions() {
+	for k, v := range exporterConfig {
+		if v {
+			exporterOptions = append(exporterOptions, mappingsToOptions[k])
+		}
+	}
+}
+
+func SetExporterConfig(opt string) {
+	exporterConfig[opt] = true
+}
 
 func ExporterDeploymentName(esName string) string {
 	return esv1.ExporterDeployment(esName)
@@ -48,8 +102,18 @@ func esURI(es esv1.Elasticsearch) string {
 	return res
 }
 
+func setupEsURI(es esv1.Elasticsearch) {
+	curlen := len(exporterOptions)
+	tmp := exporterOptions[curlen-1]
+	if strings.Contains(tmp, "--es.uri") {
+		exporterOptions[curlen-1] = esURI(es)
+	} else {
+		exporterOptions = append(exporterOptions, esURI(es))
+	}
+}
+
 func newExporterPodTemplateSpec(es esv1.Elasticsearch, lbs map[string]string) corev1.PodTemplateSpec {
-	imgUrl := "quay.io/prometheuscommunity/elasticsearch-exporter:v1.3.0"
+	setupEsURI(es)
 	p := corev1.PodTemplateSpec{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "elasticsearch-exporter",
@@ -60,7 +124,7 @@ func newExporterPodTemplateSpec(es esv1.Elasticsearch, lbs map[string]string) co
 			Containers: []corev1.Container{
 				{
 					Name:  "elasticsearch-exporter",
-					Image: imgUrl,
+					Image: exporterImageUrl,
 					Env: []corev1.EnvVar{
 						{
 							Name: "ES_PASSWORD",
@@ -74,17 +138,7 @@ func newExporterPodTemplateSpec(es esv1.Elasticsearch, lbs map[string]string) co
 							},
 						},
 					},
-					Command: []string{
-						"elasticsearch_exporter",
-						"--log.format=logfmt",
-						"--log.level=info",
-						esURI(es),
-						"--es.all",
-						"--es.timeout=30s",
-						"--es.ssl-skip-verify",
-						"--web.listen-address=:9108",
-						"--web.telemetry-path=/metrics",
-					},
+					Command: exporterOptions,
 					Resources: corev1.ResourceRequirements{
 						Limits: corev1.ResourceList{
 							"cpu":    resource.MustParse("200m"),

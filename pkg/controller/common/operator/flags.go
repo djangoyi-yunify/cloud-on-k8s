@@ -36,4 +36,12 @@ const (
 	WebhookCertDirFlag            = "webhook-cert-dir"
 	WebhookNameFlag               = "webhook-name"
 	WebhookSecretFlag             = "webhook-secret"
+	ExporterImageUrlFlag          = "exporter-image-url"
+	ExporterEsAllFlag             = "exporter-es-all"
+	ExporterEsClusterSettingsFlag = "exporter-es-cluster-settings"
+	ExporterEsIndicesFlag         = "exporter-es-indices"
+	ExporterEsIndicesSettingsFlag = "exporter-es-indices-settings"
+	ExporterEsIndicesMappingsFlag = "exporter-es-indices-mappings"
+	ExporterEsShardsFlag          = "exporter-es-shards"
+	ExporterEsSnapshotsFlag       = "exporter-es-snapshots"
 )
