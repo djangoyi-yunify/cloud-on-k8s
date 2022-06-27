@@ -58,7 +58,7 @@ func reconcileExporterUser(c k8s.Client, es esv1.Elasticsearch, existingFileReal
 		es,
 		existingFileRealm,
 		users{
-			{Name: ExporterUserName, Roles: []string{SuperUserBuiltinRole}},
+			{Name: ExporterUserName, Roles: []string{ExporterMonitoringUserRole}},
 		},
 		esv1.ExporterUserSecret(es.Name),
 		// Don't set an ownerRef for the elastic user secret, likely to be copied into different namespaces.

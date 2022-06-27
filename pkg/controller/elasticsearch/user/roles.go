@@ -40,6 +40,8 @@ const (
 	// data to the monitoring Elasticsearch cluster when Stack Monitoring is enabled
 	StackMonitoringUserRole = "eck_stack_mon_user_role"
 
+	ExporterMonitoringUserRole = "eck_exporter_mon_user_role"
+
 	// V70 indicates version 7.0
 	V70 = "v70"
 
@@ -133,6 +135,22 @@ var (
 				{
 					Names:      []string{"filebeat-*"},
 					Privileges: []string{"manage", "read", "create_doc", "view_index_metadata", "create_index"},
+				},
+			},
+		},
+		ExporterMonitoringUserRole: esclient.Role{
+			Cluster: []string{
+				"monitor",
+				"cluster:admin/snapshot/status",
+				"cluster:admin/repository/get",
+			},
+			Indices: []esclient.IndexRole{
+				{
+					Names: []string{"*"},
+					Privileges: []string{
+						"monitor",
+						"indices:admin/mappings/get",
+					},
 				},
 			},
 		},
