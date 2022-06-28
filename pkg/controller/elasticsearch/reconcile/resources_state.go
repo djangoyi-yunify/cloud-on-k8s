@@ -31,9 +31,16 @@ type ResourcesState struct {
 
 // NewResourcesStateFromAPI reflects the current ResourcesState from the API
 func NewResourcesStateFromAPI(c k8s.Client, es esv1.Elasticsearch) (*ResourcesState, error) {
-	allPods, err := k8s.PodsMatchingLabels(c, es.Namespace, label.NewLabelSelectorForElasticsearch(es))
+	tmpPods, err := k8s.PodsMatchingLabels(c, es.Namespace, label.NewLabelSelectorForElasticsearch(es))
 	if err != nil {
 		return nil, err
+	}
+	// remove the pod for exporter
+	allPods := make([]corev1.Pod, 0)
+	for _, p := range tmpPods {
+		if _, ok := p.Labels[label.ExporterDeploymentNameLabelName]; !ok {
+			allPods = append(allPods, p)
+		}
 	}
 
 	deletingPods := make([]corev1.Pod, 0)
