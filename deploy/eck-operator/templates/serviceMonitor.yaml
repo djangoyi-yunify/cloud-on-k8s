@@ -1,3 +1,4 @@
+{{ if .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" -}}
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -17,3 +18,4 @@ spec:
       common.k8s.elastic.co/type: elasticsearch
     matchExpressions:
       - {key: elasticsearch.k8s.elastic.co/exporter_deployment-name, operator: Exists}
+{{ end }}

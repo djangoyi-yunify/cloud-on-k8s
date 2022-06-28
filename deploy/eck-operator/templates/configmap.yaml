@@ -45,3 +45,27 @@ data:
     {{- if .Values.managedNamespaces }}
     namespaces: [{{ join "," .Values.managedNamespaces  }}]
     {{- end }}
+    {{- if .Values.exporter.exporterImageUrl }}
+    exporter-image-url: {{ .Values.exporter.exporterImageUrl }}
+    {{- end }}
+    {{- if not .Values.exporter.exporterAll }}
+    exporter-es-all: {{ .Values.exporter.exporterAll }}
+    {{- end }}
+    {{- if .Values.exporter.exporterClusterSettings }}
+    exporter-es-cluster-settings: {{ .Values.exporter.exporterClusterSettings }}
+    {{- end }}
+    {{- if .Values.exporter.exporterIndices }}
+    exporter-es-indices: {{ .Values.exporter.exporterIndices }}
+    {{- end }}
+    {{- if .Values.exporter.exporterIndicesSettings }}
+    exporter-es-indices-settings: {{ .Values.exporter.exporterIndicesSettings }}
+    {{- end }}
+    {{- if .Values.exporter.exporterIndicesMappings }}
+    exporter-es-indices-mappings: {{ .Values.exporter.exporterIndicesMappings }}
+    {{- end }}
+    {{- if .Values.exporter.exporterShards }}
+    exporter-es-shards: {{ .Values.exporter.exporterShards }}
+    {{- end }}
+    {{- if .Values.exporter.exporterSnapshots }}
+    exporter-es-snapshots: {{ .Values.exporter.exporterSnapshots }}
+    {{- end }}
