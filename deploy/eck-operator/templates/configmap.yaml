@@ -48,24 +48,42 @@ data:
     {{- if .Values.exporter.exporterImageUrl }}
     exporter-image-url: {{ .Values.exporter.exporterImageUrl }}
     {{- end }}
-    {{- if not .Values.exporter.exporterAll }}
+    {{- if hasKey .Values.exporter "exporterAll" }}
     exporter-es-all: {{ .Values.exporter.exporterAll }}
     {{- end }}
-    {{- if .Values.exporter.exporterClusterSettings }}
+    {{- if hasKey .Values.exporter "exporterClusterSettings" }}
     exporter-es-cluster-settings: {{ .Values.exporter.exporterClusterSettings }}
     {{- end }}
-    {{- if .Values.exporter.exporterIndices }}
+    {{- if hasKey .Values.exporter "exporterIndices" }}
     exporter-es-indices: {{ .Values.exporter.exporterIndices }}
     {{- end }}
-    {{- if .Values.exporter.exporterIndicesSettings }}
+    {{- if hasKey .Values.exporter "exporterIndicesSettings" }}
     exporter-es-indices-settings: {{ .Values.exporter.exporterIndicesSettings }}
     {{- end }}
-    {{- if .Values.exporter.exporterIndicesMappings }}
+    {{- if hasKey .Values.exporter "exporterIndicesMappings" }}
     exporter-es-indices-mappings: {{ .Values.exporter.exporterIndicesMappings }}
     {{- end }}
-    {{- if .Values.exporter.exporterShards }}
+    {{- if hasKey .Values.exporter "exporterShards" }}
     exporter-es-shards: {{ .Values.exporter.exporterShards }}
     {{- end }}
     {{- if .Values.exporter.exporterSnapshots }}
     exporter-es-snapshots: {{ .Values.exporter.exporterSnapshots }}
     {{- end }}
+    {{- if .Values.config.nsApm }}
+    ns-apm: {{ .Values.config.nsApm }}
+    {{- end}}
+    {{- if .Values.config.nsElasticsearch }}
+    ns-elasticsearch: {{ .Values.config.nsElasticsearch }}
+    {{- end}}
+    {{- if .Values.config.nsKibana }}
+    ns-kibana: {{ .Values.config.nsKibana }}
+    {{- end}}
+    {{- if .Values.config.nsEnterpiseSearch }}
+    ns-enterprise-search: {{ .Values.config.nsEnterpiseSearch }}
+    {{- end}}
+    {{- if .Values.config.nsBeats }}
+    ns-beats: {{ .Values.config.nsBeats }}
+    {{- end}}
+    {{- if .Values.config.nsMaps }}
+    ns-maps: {{ .Values.config.nsMaps }}
+    {{- end}}
