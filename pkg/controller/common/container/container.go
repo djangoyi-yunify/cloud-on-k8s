@@ -10,15 +10,52 @@ import (
 )
 
 const DefaultContainerRegistry = "docker.elastic.co"
+const DefaultNsApm = "apm"
+const DefaultNsElasticsearch = "elasticsearch"
+const DefaultNsKibana = "kibana"
+const DefaultNsEnterpiseSearch = "enterprise-search"
+const DefaultNsBeats = "beats"
+const DefaultNsMaps = "elastic-maps-service"
 
 var (
 	containerRegistry = DefaultContainerRegistry
 	containerSuffix   = ""
+
+	nsApm             = ""
+	nsElasticsearch   = ""
+	nsKibana          = ""
+	nsEnterpiseSearch = ""
+	nsBeats           = ""
+	nsMaps            = ""
 )
 
 // SetContainerRegistry sets the global container registry used to download Elastic stack images.
 func SetContainerRegistry(registry string) {
 	containerRegistry = registry
+}
+
+func SetNsApm(val string) {
+	nsApm = val
+}
+
+func SetNsElasticsearch(val string) {
+	nsElasticsearch = val
+}
+
+func SetNsKibana(val string) {
+	nsKibana = val
+}
+
+func SetNsEnterpiseSearch(val string) {
+	nsEnterpiseSearch = val
+}
+
+func SetNsBeats(val string) {
+	nsBeats = val
+}
+
+func SetNsMaps(val string) {
+	nsMaps = val
 }
 
 func SetContainerSuffix(suffix string) {
@@ -27,20 +64,35 @@ func SetContainerSuffix(suffix string) {
 
 type Image string
 
-const (
-	APMServerImage        Image = "apm/apm-server"
-	ElasticsearchImage    Image = "elasticsearch/elasticsearch"
-	KibanaImage           Image = "kibana/kibana"
-	EnterpriseSearchImage Image = "enterprise-search/enterprise-search"
-	FilebeatImage         Image = "beats/filebeat"
-	MetricbeatImage       Image = "beats/metricbeat"
-	HeartbeatImage        Image = "beats/heartbeat"
-	AuditbeatImage        Image = "beats/auditbeat"
-	JournalbeatImage      Image = "beats/journalbeat"
-	PacketbeatImage       Image = "beats/packetbeat"
-	AgentImage            Image = "beats/elastic-agent"
-	MapsImage             Image = "elastic-maps-service/elastic-maps-server-ubi8"
+var (
+	APMServerImage        Image
+	ElasticsearchImage    Image
+	KibanaImage           Image
+	EnterpriseSearchImage Image
+	FilebeatImage         Image
+	MetricbeatImage       Image
+	HeartbeatImage        Image
+	AuditbeatImage        Image
+	JournalbeatImage      Image
+	PacketbeatImage       Image
+	AgentImage            Image
+	MapsImage             Image
 )
+
+func MakeImageString() {
+	APMServerImage = Image(fmt.Sprintf("%s/apm-server", nsApm))
+	ElasticsearchImage = Image(fmt.Sprintf("%s/elasticsearch", nsElasticsearch))
+	KibanaImage = Image(fmt.Sprintf("%s/kibana", nsKibana))
+	EnterpriseSearchImage = Image(fmt.Sprintf("%s/enterprise-search", nsEnterpiseSearch))
+	FilebeatImage = Image(fmt.Sprintf("%s/filebeat", nsBeats))
+	MetricbeatImage = Image(fmt.Sprintf("%s/metricbeat", nsBeats))
+	HeartbeatImage = Image(fmt.Sprintf("%s/heartbeat", nsBeats))
+	AuditbeatImage = Image(fmt.Sprintf("%s/auditbeat", nsBeats))
+	JournalbeatImage = Image(fmt.Sprintf("%s/journalbeat", nsBeats))
+	PacketbeatImage = Image(fmt.Sprintf("%s/packetbeat", nsBeats))
+	AgentImage = Image(fmt.Sprintf("%s/elastic-agent", nsBeats))
+	MapsImage = Image(fmt.Sprintf("%s/elastic-maps-server-ubi8", nsMaps))
+}
 
 // ImageRepository returns the full container image name by concatenating the current container registry and the image path with the given version.
 func ImageRepository(img Image, version string) string {

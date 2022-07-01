@@ -177,6 +177,36 @@ func Command() *cobra.Command {
 		"Container registry to use when downloading Elastic Stack container images",
 	)
 	cmd.Flags().String(
+		operator.NsApmFlag,
+		container.DefaultNsApm,
+		"Container registry namespace for APM images",
+	)
+	cmd.Flags().String(
+		operator.NsElasticsearchFlag,
+		container.DefaultNsElasticsearch,
+		"Container registry namespace for Elasticsearch images",
+	)
+	cmd.Flags().String(
+		operator.NsKibanaFlag,
+		container.DefaultNsKibana,
+		"Container registry namespace for Kibana images",
+	)
+	cmd.Flags().String(
+		operator.NsEnterpiseSearchFlag,
+		container.DefaultNsEnterpiseSearch,
+		"Container registry namespace for Enterprise Search images",
+	)
+	cmd.Flags().String(
+		operator.NsBeatsFlag,
+		container.DefaultNsBeats,
+		"Container registry namespace for Beats images",
+	)
+	cmd.Flags().String(
+		operator.NsMapsFlag,
+		container.DefaultNsMaps,
+		"Container registry namespace for Maps images",
+	)
+	cmd.Flags().String(
 		operator.DebugHTTPListenFlag,
 		"localhost:6060",
 		"Listen address for debug HTTP server (only available in development mode)",
@@ -473,6 +503,29 @@ func startOperator(ctx context.Context) error {
 	containerRegistry := viper.GetString(operator.ContainerRegistryFlag)
 	log.Info("Setting default container registry", "container_registry", containerRegistry)
 	container.SetContainerRegistry(containerRegistry)
+
+	// set images' namespaces
+	nsApm := viper.GetString(operator.NsApmFlag)
+	log.Info("Setting default namespace for apm image", "ns-apm", nsApm)
+	container.SetNsApm(nsApm)
+	nsElasticsearch := viper.GetString(operator.NsElasticsearchFlag)
+	log.Info("Setting default namespace for elasticsearch image", "ns-elasticsearch", nsElasticsearch)
+	container.SetNsElasticsearch(nsElasticsearch)
+	nsKibana := viper.GetString(operator.NsKibanaFlag)
+	log.Info("Setting default namespace for kibana image", "ns-kibana", nsKibana)
+	container.SetNsKibana(nsKibana)
+	nsEnterpiseSearch := viper.GetString(operator.NsEnterpiseSearchFlag)
+	log.Info("Setting default namespace for enterprise-search image", "ns-enterprise-search", nsEnterpiseSearch)
+	container.SetNsEnterpiseSearch(nsEnterpiseSearch)
+	nsBeats := viper.GetString(operator.NsBeatsFlag)
+	log.Info("Setting default namespace for beats image", "ns-beats", nsBeats)
+	container.SetNsBeats(nsBeats)
+	nsMaps := viper.GetString(operator.NsMapsFlag)
+	log.Info("Setting default namespace for maps image", "ns-maps", nsMaps)
+	container.SetNsMaps(nsMaps)
+
+	// make the image string with proper namespaces
+	container.MakeImageString()
 
 	// enforce UBI stack images if requested
 	ubiOnly := viper.GetBool(operator.UBIOnlyFlag)
