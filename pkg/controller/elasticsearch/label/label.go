@@ -122,6 +122,12 @@ func NewLabels(es types.NamespacedName) map[string]string {
 	}
 }
 
+func NewNoTypeLabels(es types.NamespacedName) map[string]string {
+	return map[string]string{
+		ClusterNameLabelName: es.Name,
+	}
+}
+
 // NewPodLabels returns labels to apply for a new Elasticsearch pod.
 func NewPodLabels(
 	es types.NamespacedName,
@@ -183,20 +189,19 @@ func NewStatefulSetLabels(es types.NamespacedName, ssetName string) map[string]s
 }
 
 func NewExporterServiceLabels(es types.NamespacedName, edName string) map[string]string {
-	lbls := NewLabels(es)
+	lbls := NewNoTypeLabels(es)
 	lbls[ExporterDeploymentNameLabelName] = edName
 	return lbls
 }
 
 func NewExporterDeploymentLabels(es types.NamespacedName, edName string, ver version.Version) map[string]string {
-	lbls := NewLabels(es)
+	lbls := NewNoTypeLabels(es)
 	lbls[ExporterDeploymentNameLabelName] = edName
-	lbls[VersionLabelName] = ver.String()
 	return lbls
 }
 
 func NewLabelSelectorForExporterDeployment(es types.NamespacedName, edName string) map[string]string {
-	sels := NewLabels(es)
+	sels := NewNoTypeLabels(es)
 	sels[ExporterDeploymentNameLabelName] = edName
 	return sels
 }

@@ -65,7 +65,14 @@ func GetActualPodsForCluster(c k8s.Client, es esv1.Elasticsearch) ([]corev1.Pod,
 	if err := c.List(context.Background(), &pods, ns, matchLabels); err != nil {
 		return nil, err
 	}
-	return pods.Items, nil
+
+	res := make([]corev1.Pod, 0)
+	for _, v := range pods.Items {
+		if _, ok := v.Labels[label.ExporterDeploymentNameLabelName]; !ok {
+			res = append(res, v)
+		}
+	}
+	return res, nil
 }
 
 // GetActualMastersForCluster returns the list of existing master-eligible pods for the cluster.
