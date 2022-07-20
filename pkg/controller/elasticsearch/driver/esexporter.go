@@ -7,7 +7,6 @@ import (
 	esv1 "github.com/elastic/cloud-on-k8s/pkg/apis/elasticsearch/v1"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/common/deployment"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/common/operator"
-	"github.com/elastic/cloud-on-k8s/pkg/controller/common/version"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/elasticsearch/label"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/elasticsearch/services"
 	"github.com/elastic/cloud-on-k8s/pkg/controller/elasticsearch/user"
@@ -78,11 +77,7 @@ func ExporterDeploymentName(esName string) string {
 func newExporterDeployment(es esv1.Elasticsearch) (appsv1.Deployment, error) {
 	nsn := k8s.ExtractNamespacedName(&es)
 	nm := ExporterDeploymentName(es.Name)
-	ver, err := version.Parse(es.Spec.Version)
-	if err != nil {
-		return appsv1.Deployment{}, err
-	}
-	lbs := label.NewExporterDeploymentLabels(nsn, nm, ver)
+	lbs := label.NewExporterDeploymentLabels(nsn, nm)
 	sel := label.NewLabelSelectorForExporterDeployment(nsn, nm)
 	d := deployment.New(deployment.Params{
 		Name:            nm,

@@ -15,6 +15,10 @@ const (
 	TypeLabelName = "common.k8s.elastic.co/type"
 
 	credentialsLabel = "eck.k8s.elastic.co/credentials"
+
+	// AppNameLabelName used for dmp to display app name
+	AppNameLabelName = "app.kubernetes.io/name"
+	DmpAppName       = "eck"
 )
 
 // TrueFalseLabel is a label that has a true/false value.

@@ -23,7 +23,8 @@ const (
 // NewLabels constructs a new set of labels for a Kibana pod
 func NewLabels(kibanaName string) map[string]string {
 	return map[string]string{
-		KibanaNameLabelName:  kibanaName,
-		common.TypeLabelName: Type,
+		KibanaNameLabelName:     kibanaName,
+		common.TypeLabelName:    Type,
+		common.AppNameLabelName: common.DmpAppName,
 	}
 }

@@ -117,14 +117,16 @@ func ExtractVersion(labels map[string]string) (version.Version, error) {
 // NewLabels constructs a new set of labels from an Elasticsearch definition.
 func NewLabels(es types.NamespacedName) map[string]string {
 	return map[string]string{
-		ClusterNameLabelName: es.Name,
-		common.TypeLabelName: Type,
+		ClusterNameLabelName:    es.Name,
+		common.TypeLabelName:    Type,
+		common.AppNameLabelName: common.DmpAppName,
 	}
 }
 
 func NewNoTypeLabels(es types.NamespacedName) map[string]string {
 	return map[string]string{
-		ClusterNameLabelName: es.Name,
+		ClusterNameLabelName:    es.Name,
+		common.AppNameLabelName: common.DmpAppName,
 	}
 }
 
@@ -194,7 +196,7 @@ func NewExporterServiceLabels(es types.NamespacedName, edName string) map[string
 	return lbls
 }
 
-func NewExporterDeploymentLabels(es types.NamespacedName, edName string, ver version.Version) map[string]string {
+func NewExporterDeploymentLabels(es types.NamespacedName, edName string) map[string]string {
 	lbls := NewNoTypeLabels(es)
 	lbls[ExporterDeploymentNameLabelName] = edName
 	return lbls
