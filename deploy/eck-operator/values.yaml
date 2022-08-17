@@ -138,12 +138,12 @@ config:
   metricsPort: "0"
 
   # containerRegistry to use for pulling Elasticsearch and other application container images.
-  containerRegistry: docker.elastic.co
+  containerRegistry: registry.docker.com
   # namespace of containerRegistry(refer to harbor's terminology, equal to the 'username' of docker.com)
   # all config is commented out and given its default value. Change the value if you don't use the default
   # nsApm: "apm"
-  # nsElasticsearch: "elasticsearch"
-  # nsKibana: "kibana"
+  nsElasticsearch: "library"
+  nsKibana: "library"
   # nsEnterpiseSearch: "enterprise-search"
   # nsBeats: "beats"
   # nsMaps: "elastic-maps-service"
