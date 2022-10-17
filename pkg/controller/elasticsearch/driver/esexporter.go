@@ -33,10 +33,15 @@ var (
 	}
 )
 
-const DefaultExporterImageUrl = "quay.io/prometheuscommunity/elasticsearch-exporter:v1.3.0"
+const (
+	DefaultExporterImageRegistry  = "quay.io"
+	DefaultExporterImageNamespace = "prometheuscommunity"
+	DefaultExporterImageName      = "elasticsearch-exporter"
+	DefaultExporterImageTag       = "v1.3.0"
+)
 
-func SetExporterImageUrl(url string) {
-	exporterImageUrl = url
+func SetExporterImageUrl(registry string, ns string, name string, tag string) {
+	exporterImageUrl = fmt.Sprintf("%s/%s/%s:%s", registry, ns, name, tag)
 }
 
 func InitExporterConfig() {

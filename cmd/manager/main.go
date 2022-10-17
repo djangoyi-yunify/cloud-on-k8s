@@ -327,9 +327,24 @@ func Command() *cobra.Command {
 		"Enables setting the default security context with fsGroup=1000 for Elasticsearch 8.0+ Pods. Ignored pre-8.0. Possible values: true, false, auto-detect",
 	)
 	cmd.Flags().String(
-		operator.ExporterImageUrlFlag,
-		driver.DefaultExporterImageUrl,
-		fmt.Sprintf("elasticsearch-exporter's image url, default value is %s", driver.DefaultExporterImageUrl),
+		operator.ExporterImageRegistryFlag,
+		driver.DefaultExporterImageRegistry,
+		fmt.Sprintf("elasticsearch-exporter's image regitry, default value is %s", driver.DefaultExporterImageRegistry),
+	)
+	cmd.Flags().String(
+		operator.ExporterImageNamespaceFlag,
+		driver.DefaultExporterImageNamespace,
+		fmt.Sprintf("elasticsearch-exporter's image namespace, default value is %s", driver.DefaultExporterImageNamespace),
+	)
+	cmd.Flags().String(
+		operator.ExporterImageNameFlag,
+		driver.DefaultExporterImageName,
+		fmt.Sprintf("elasticsearch-exporter's image name, default value is %s", driver.DefaultExporterImageName),
+	)
+	cmd.Flags().String(
+		operator.ExporterImageTagFlag,
+		driver.DefaultExporterImageTag,
+		fmt.Sprintf("elasticsearch-exporter's image tag, default value is %s", driver.DefaultExporterImageTag),
 	)
 	cmd.Flags().Bool(
 		operator.ExporterEsAllFlag,
@@ -535,9 +550,15 @@ func startOperator(ctx context.Context) error {
 	}
 
 	// set elasticsearch-exporter image url
-	exporterImageUrl := viper.GetString(operator.ExporterImageUrlFlag)
-	log.Info("Setting default exporter image url", "exporter-image-url", exporterImageUrl)
-	driver.SetExporterImageUrl(exporterImageUrl)
+	exporterImageRegistry := viper.GetString(operator.ExporterImageRegistryFlag)
+	log.Info("Setting default exporter image registry", "exporter-image-registry", exporterImageRegistry)
+	exporterImageNamespace := viper.GetString(operator.ExporterImageNamespaceFlag)
+	log.Info("Setting default exporter image namespace", "exporter-image-namespace", exporterImageNamespace)
+	exporterImageName := viper.GetString(operator.ExporterImageNameFlag)
+	log.Info("Setting default exporter image name", "exporter-image-name", exporterImageName)
+	exporterImageTag := viper.GetString(operator.ExporterImageTagFlag)
+	log.Info("Setting default exporter image tag", "exporter-image-tag", exporterImageTag)
+	driver.SetExporterImageUrl(exporterImageRegistry, exporterImageNamespace, exporterImageName, exporterImageTag)
 
 	// init elasticsearch-exporter config
 	driver.InitExporterConfig()
